@@ -2,748 +2,542 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAGUER'S BANK - Credit Assessment</title>
+    <title>DAGUER'S BANK - Credit Card Application</title>
     <style>
-        /* Import Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
-
-        /* Font Assignments as specified */
-        /* Eternalo substitution: Cinzel (Classic Serif) */
-        /* Platino Bold substitution: Playfair Display Bold */
-        /* Platino substitution: Playfair Display Regular */
-
-        :root {
-            --bg-color: #24574B;
-            --gold-color: #D4AF37;
-            --gold-bright: #FFD700;
-            --text-light: #F5F5F5;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        /* Base Styles */
         body {
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            font-family: 'Playfair Display', serif;
-            min-height: 100vh;
+            background-color: #24574B;
+            color: white;
+            font-family: 'Platino', sans-serif;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-
-        /* Header / Bank Name Style */
-        header {
-            margin-bottom: 40px;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
             text-align: center;
         }
 
-        .bank-title {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            color: var(--gold-color);
-            padding: 15px 40px;
-            border: 3px double var(--gold-color);
-            letter-spacing: 4px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            background-color: rgba(15, 43, 36, 0.6);
-            display: inline-block;
-        }
-
-        /* Main Container for Screens */
-        .container {
-            width: 100%;
-            max-width: 650px;
-            min-height: 400px;
-            position: relative;
-        }
-
-        /* Question and Result Boxes */
-        .screen {
-            background-color: rgba(18, 48, 41, 0.9);
-            border: 2px solid var(--gold-bright);
-            border-radius: 4px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            display: none; /* Hidden by default */
-            width: 100%;
-            animation: fadeIn 0.5s ease forward;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        #app-container {
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
         }
 
         /* Typography */
-        h2.question-text {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: 1.6rem;
-            line-height: 1.4;
-            margin-bottom: 30px;
-            color: #FFFFFF;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-            padding-bottom: 15px;
-        }
-
-        /* Inputs and Options */
-        .input-group {
-            margin-top: 20px;
-        }
-
-        .text-input {
-            width: 100%;
-            padding: 15px;
-            background-color: rgba(255,255,255,0.05);
-            border: 1px solid var(--gold-color);
-            color: #FFF;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .text-input:focus {
-            background-color: rgba(255,255,255,0.1);
-            border-color: var(--gold-bright);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-        }
-
-        .options-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .option-item {
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            padding: 16px 20px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .option-item:hover {
-            background-color: rgba(212, 175, 55, 0.15);
-            border-color: var(--gold-bright);
-            transform: translateX(5px);
-        }
-
-        /* Navigation Buttons */
-        .btn-container {
-            margin-top: 30px;
-            display: flex;
-            justify-content: flex-end;
-        }
-
-        .next-btn {
-            background-color: transparent;
-            color: var(--gold-color);
-            border: 1px solid var(--gold-color);
-            padding: 12px 35px;
-            font-family: 'Cinzel', serif;
-            font-size: 1rem;
-            cursor: pointer;
-            letter-spacing: 2px;
-            transition: all 0.3s;
-        }
-
-        .next-btn:hover {
-            background-color: var(--gold-color);
-            color: var(--bg-color);
-            font-weight: bold;
-        }
-
-        /* Loading Screen Assets */
-        .loader-content {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        /* CSS Accountant Working Animation */
-        .accountant-animation {
-            width: 120px;
-            height: 100px;
-            margin: 0 auto 35px auto;
-            position: relative;
-        }
-        
-        .computer {
-            width: 70px;
-            height: 45px;
-            border: 3px solid var(--gold-color);
-            border-radius: 4px;
-            position: absolute;
-            bottom: 20px;
-            left: 25px;
-            background: #123029;
-        }
-        .computer::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 20px;
-            width: 24px;
-            height: 6px;
-            background: var(--gold-color);
-        }
-
-        .accountant-hands {
-            position: absolute;
-            bottom: 5px;
-            left: 30px;
-            width: 50px;
-            height: 10px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .hand {
-            width: 8px;
-            height: 8px;
-            background: #e0b088;
-            border-radius: 50%;
-            animation: typing 0.2s infinite alternate;
-        }
-        .hand.right { animation-delay: 0.1s; }
-
-        @keyframes typing {
-            from { transform: translateY(0); }
-            to { transform: translateY(-8px); }
-        }
-
-        .loading-text {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
+        h1.bank-name {
+            font-family: 'Eternalo', serif;
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            color: var(--gold-color);
-        }
-
-        /* Progress Bar Setup */
-        .progress-container {
-            width: 100%;
-            height: 6px;
-            background-color: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: var(--gold-bright);
-            transition: width 0.1s linear;
-        }
-
-        /* Credit Card Results Displays */
-        .card-result-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-        }
-
-        .card-title-top {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
-            color: #FFF;
-            text-align: center;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        /* Base Physical Card Object Wrapper */
-        .credit-card {
-            width: 400px;
-            height: 250px;
-            border-radius: 15px;
-            padding: 25px;
-            position: relative;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.2);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            color: #000;
-            font-family: monospace; /* Standard EMV Card Font Style */
-            text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
-        }
-
-        /* EMV Chip Layout positioning */
-        .emv-chip {
-            width: 50px;
-            height: 38px;
-            background: linear-gradient(135deg, #dfb76c 0%, #c29b47 44%, #dfb76c 100%);
-            border-radius: 6px;
-            position: absolute;
-            top: 75px;
-            left: 30px;
-            border: 1px solid rgba(0,0,0,0.2);
-        }
-
-        .card-bank-name {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            text-align: right;
-            font-weight: bold;
-        }
-
-        .card-number {
-            font-size: 1.4rem;
-            letter-spacing: 3px;
-            margin-top: auto;
-            margin-bottom: 15px;
-            white-space: nowrap;
-        }
-
-        .card-holder {
-            font-size: 1.1rem;
+            padding: 15px;
+            border: 4px solid silver;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(192, 192, 192, 0.5), inset 0 0 10px rgba(192, 192, 192, 0.5);
+            background: linear-gradient(145deg, #24574B, #1e493e);
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        /* Credit Limit Display Typography */
-        .credit-limit-display {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            color: var(--gold-color);
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .credit-limit-display span {
-            color: #FFF;
+        .question-text {
+            font-family: 'Platino Bold', 'Platino', sans-serif;
             font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
         }
 
-        /* Dynamic Card Design Styles */
-        .card-declined {
-            background: #111;
-            border: 2px dashed #cc0000;
-            color: #cc0000;
-            display: flex;
+        /* Layouts */
+        .screen {
+            display: none;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            text-shadow: none;
         }
 
-        .card-plain-white {
-            background: #FFFFFF;
-            color: #333;
-            border: 1px solid #ddd;
-            text-shadow: none;
+        .screen.active {
+            display: flex;
         }
 
-        .card-turquoise-white {
-            background: linear-gradient(135deg, #40E0D0 0%, #FFFFFF 100%);
-            color: #222;
+        .question-box {
+            border: 4px solid silver;
+            border-radius: 8px;
+            padding: 30px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+            background-color: rgba(0, 0, 0, 0.1);
         }
 
-        .card-yellow-green {
-            background: linear-gradient(135deg, #FFD700 0%, #228B22 100%);
-            color: #FFF;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        /* Controls */
+        input[type="text"] {
+            padding: 10px;
+            font-size: 1.2rem;
+            width: 80%;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: none;
+            font-family: 'Platino', sans-serif;
         }
 
-        .card-red-yellow {
-            background: linear-gradient(135deg, #FF4500 0%, #FFD700 100%);
-            color: #FFF;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        button {
+            background-color: silver;
+            color: #24574B;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            font-family: 'Platino Bold', sans-serif;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
         }
 
-        .card-purple {
-            background: linear-gradient(135deg, #4B0082 0%, #8A2BE2 100%);
-            color: #FFF;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+        button:hover {
+            background-color: white;
         }
 
-        .card-gold {
-            background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%);
-            color: #4A3B18;
-            border: 1px solid #AA771C;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+        button:active {
+            transform: scale(0.98);
         }
 
-        .card-platinum-brushed {
-            background: linear-gradient(135deg, #f0f0f0 0%, #dbdbdb 50%, #cccccc 55%, #f2f2f2 100%);
-            color: #333;
-            border: 1px solid #aaa;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7), inset 0 0 20px rgba(255,255,255,0.8);
+        .option-btn {
+            background-color: transparent;
+            color: white;
+            border: 2px solid silver;
+            text-align: left;
+            font-family: 'Platino', sans-serif;
+            font-weight: normal;
         }
 
-        .card-black-gunmetal {
-            background: linear-gradient(135deg, #0d0d0d 0%, #262626 50%, #1a1a1a 100%);
-            color: #d4af37;
-            border: 1px solid #333;
-            text-shadow: 1px 1px 1px rgba(0,0,0,0.8);
+        .option-btn:hover {
+            background-color: rgba(192, 192, 192, 0.2);
+            color: white;
         }
-        .card-black-gunmetal .card-bank-name { color: #d4af37; }
 
-        /* Responsive scaling for card preview */
-        @media(max-width: 450px) {
-            .credit-card {
-                width: 320px;
-                height: 200px;
-                padding: 15px;
-            }
-            .card-number { font-size: 1.1rem; }
-            .emv-chip { top: 60px; width: 40px; height: 30px; }
-            h2.question-text { font-size: 1.3rem; }
+        /* Loading Animation */
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+            border: 1px solid silver;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 30px;
+            background-color: silver;
+            transition: width 0.1s linear;
+        }
+
+        .calculating-text {
+            font-family: 'Platino Bold', sans-serif;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        /* Credit Card Design */
+        .result-title {
+            font-size: 1.8rem;
+            font-family: 'Platino Bold', sans-serif;
+            margin-bottom: 20px;
+            color: silver;
+        }
+
+        .credit-limit {
+            font-size: 1.5rem;
+            margin-top: 25px;
+            font-family: 'Platino Bold', sans-serif;
+        }
+
+        .declined-text {
+            font-size: 3rem;
+            color: #ff4d4d;
+            font-weight: bold;
+            border: 5px solid #ff4d4d;
+            padding: 20px;
+            transform: rotate(-10deg);
+            margin: 40px 0;
+        }
+
+        .credit-card {
+            width: 400px;
+            height: 250px;
+            border-radius: 15px;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: 0 15px 25px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            text-align: left;
+            margin: 0 auto;
+        }
+
+        .card-bank {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-family: 'Eternalo', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .card-chip {
+            position: absolute;
+            top: 90px;
+            left: 30px;
+            width: 50px;
+            height: 35px;
+            background: linear-gradient(135deg, #e6c27a, #d4af37, #997a00);
+            border-radius: 5px;
+            border: 1px solid rgba(0,0,0,0.2);
+        }
+
+        .card-chip::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(0,0,0,0.3);
+            box-shadow: 0 14px 0 rgba(0,0,0,0.3);
+        }
+
+        .card-number {
+            font-size: 1.6rem;
+            letter-spacing: 3px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .card-name {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Specific Card Themes */
+        .card-white { background: #f0f0f0; color: #333; }
+        .card-white .card-bank, .card-white .card-number, .card-white .card-name { text-shadow: none; color: #333; }
+        .card-red-gray { background: linear-gradient(135deg, #a03030, #555555); color: white; }
+        .card-purple { background: linear-gradient(135deg, #4b0082, #800080); color: white; }
+        .card-light-blue { background: linear-gradient(135deg, #87ceeb, #4682b4); color: white; }
+        .card-golden { background: linear-gradient(135deg, #ffd700, #b8860b); color: #333; }
+        .card-golden .card-bank, .card-golden .card-number, .card-golden .card-name { text-shadow: none; }
+        .card-platinum { background: linear-gradient(135deg, #e5e4e2, #b0c4de); color: #333; }
+        .card-platinum .card-bank, .card-platinum .card-number, .card-platinum .card-name { text-shadow: none; }
+        .card-black { background: linear-gradient(135deg, #2b2b2b, #000000); color: silver; }
+
+        @media (max-width: 450px) {
+            .credit-card { width: 100%; height: 200px; }
+            .card-number { font-size: 1.2rem; }
+            .card-chip { top: 70px; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="bank-title">DAGUER'S BANK</div>
-    </header>
+<div id="app-container">
+    <h1 class="bank-name">DAGUER'S BANK</h1>
 
-    <div class="container">
-        <!-- Question Screens generated dynamically by JS -->
-        <div id="quiz-container"></div>
+    <div id="welcome-screen" class="screen active">
+        <h2>Welcome</h2>
+        <button onclick="showNameScreen()">Get Started</button>
+    </div>
 
-        <!-- Animated Loading Processor Screen -->
-        <div id="loading-screen" class="screen">
-            <div class="loader-content">
-                <div class="accountant-animation">
-                    <div class="computer"></div>
-                    <div class="accountant-hands">
-                        <div class="hand left"></div>
-                        <div class="hand right"></div>
-                    </div>
-                </div>
-                <div class="loading-text">Analyzing Risk Portfolio...</div>
-                <div class="progress-container">
-                    <div id="progress-bar" class="progress-bar"></div>
-                </div>
-            </div>
+    <div id="name-screen" class="screen">
+        <div class="question-box">
+            <div class="question-text">Please enter your name:</div>
+            <input type="text" id="user-name-input" placeholder="Your Name" autocomplete="off">
+            <button onclick="startQuiz()">Continue</button>
         </div>
+    </div>
 
-        <!-- Final Decision Result Screen -->
-        <div id="result-screen" class="screen">
-            <div class="card-result-container" id="result-payload">
-                <!-- Content injected dynamically via script -->
+    <div id="question-screen" class="screen">
+        <div class="question-box">
+            <div id="question-text" class="question-text"></div>
+            <div id="options-container"></div>
+        </div>
+    </div>
+
+    <div id="loading-screen" class="screen">
+        <div class="question-box">
+            <div class="calculating-text">Calculating Credit Worthiness...</div>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Formatted structured questions keeping every string exactly literal
-        const quizData = [
-            {
-                type: "input",
-                question: "Enter your name"
-            },
-            {
-                type: "options",
-                question: "Gender (Add 3 boxes for the options)",
-                options: [
-                    { text: "Male", val: 1 },
-                    { text: "Female", val: 1 },
-                    { text: "Something Woke", val: 2 }
-                ]
-            },
-            {
-                type: "options",
-                question: "Do you have an existing account with this bank?",
-                options: [
-                    { text: "Yes", val: -1 },
-                    { text: "No", val: 1 },
-                    { text: "Never heard of this prestigious institution before", val: 2 },
-                    { text: "No (again)", val: -2 }
-                ]
-            },
-            {
-                type: "options",
-                question: "Why do you need this credit card?",
-                options: [
-                    { text: "None of your business", val: 1 },
-                    { text: "My house is on the line and about to get repossessed", val: -2 },
-                    { text: "To show I care about the Core Values", val: 2 },
-                    { text: "To make reckless purchases", val: -1 }
-                ]
-            },
-            {
-                type: "options",
-                question: "What is your race?",
-                options: [
-                    { text: "White", val: 1 },
-                    { text: "Black", val: -2 },
-                    { text: "Latinx", val: -1 },
-                    { text: "This question is illegal", val: 2 }
-                ]
-            },
-            {
-                type: "options",
-                question: "Where do you lie in the political spectrum?",
-                options: [
-                    { text: "Far Left", val: 1 },
-                    { text: "Left", val: 2 },
-                    { text: "Center", val: 0 },
-                    { text: "Right", val: -1 },
-                    { text: "Far Right", val: -2 }
-                ]
-            },
-            {
-                type: "options",
-                question: "What is the capital of Paraguay?",
-                options: [
-                    { text: "Montevideo", val: -1 },
-                    { text: "Asuncion", val: 2 }, // Account for lowercase 'v' in string request
-                    { text: "La Paz", val: -1 },
-                    { text: "What is a Paraguay?", val: 1 }
-                ]
-            },
-            {
-                type: "options",
-                question: "What is going to be your first purchase with this new plastic?",
-                options: [
-                    { text: "A gift for my wife/husband?", val: -1 },
-                    { text: "Food for myself, or the mortgage payment (I told you my house is on the line)", val: -2 },
-                    { text: "I plan on using this card for emergencies only", val: 2 },
-                    { text: "Again, none of your business", val: 1 }
-                ]
-            },
-            {
-                type: "options",
-                question: "What is your favorite thing about Yehuda?",
-                options: [
-                    { text: "His facy face", val: -1 },
-                    { text: "His professionalism", val: 2 },
-                    { text: "His work ethic", val: 1 },
-                    { text: "Not really my cup of tea that guy", val: -2 }
-                ]
-            },
-            {
-                type: "options",
-                question: "What brand is your car?",
-                options: [
-                    { text: "I don’t have a car ☹", val: -1 },
-                    { text: "A Dodge", val: -2 },
-                    { text: "I use my bike", val: 2 },
-                    { text: "Obviously, something better, is not like I work in the Mexico office", val: 1 }
-                ]
-            },
-            {
-                type: "options",
-                question: "Samuel D’s favorite brand is…",
-                options: [
-                    { text: "Samuel Heath", val: -1 },
-                    { text: "Rubinet", val: 2 },
-                    { text: "Phylrich", val: -2 },
-                    { text: "Gessi", val: 1 }
-                ]
-            },
-            {
-                type: "options",
-                question: "In Cuernavaca. Licensed Plates are formatted with 3 letters and 4 numbers (for example: AAA-####). The letters i, q, o and x are excluded, and letters a and e can’t be used in the second position. How many combinations are there?",
-                options: [
-                    { text: "21,500,000", val: -1 },
-                    { text: "A lot", val: 1 },
-                    { text: "96,800,000", val: 2 },
-                    { text: "At least 2", val: -2 }
-                ]
-            }
-        ];
+    <div id="result-screen" class="screen">
+        <div id="card-title" class="result-title"></div>
+        <div id="card-container"></div>
+        <div id="card-limit" class="credit-limit"></div>
+    </div>
 
-        let currentStep = 0;
-        let totalScore = 0;
-        let applicantName = "Valued Client";
+</div>
 
-        const quizContainer = document.getElementById('quiz-container');
+<script>
+    // Variables
+    let currentQuestionIndex = 0;
+    let totalScore = 0;
+    let userName = "";
 
-        // Dynamic Component Engine Initialization
-        function buildQuiz() {
-            quizData.forEach((step, index) => {
-                const screenDiv = document.createElement('div');
-                screenDiv.className = `screen ${index === 0 ? 'active' : ''}`;
-                screenDiv.id = `step-${index}`;
-
-                const qText = document.createElement('h2');
-                qText.className = 'question-text';
-                qText.innerText = step.question;
-                screenDiv.appendChild(qText);
-
-                if (step.type === 'input') {
-                    const inputGroup = document.createElement('div');
-                    inputGroup.className = 'input-group';
-                    
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.className = 'text-input';
-                    input.placeholder = "Enter your full name legal profile";
-                    input.id = 'applicant-name-field';
-                    
-                    inputGroup.appendChild(input);
-                    screenDiv.appendChild(inputGroup);
-
-                    // Frame Button
-                    const btnContainer = document.createElement('div');
-                    btnContainer.className = 'btn-container';
-                    const nextBtn = document.createElement('button');
-                    nextBtn.className = 'next-btn';
-                    nextBtn.innerText = 'PROCEED';
-                    nextBtn.onclick = () => {
-                        const val = document.getElementById('applicant-name-field').value.trim();
-                        if(val !== "") applicantName = val;
-                        navigateNext(0);
-                    };
-                    btnContainer.appendChild(nextBtn);
-                    screenDiv.appendChild(btnContainer);
-
-                } else if (step.type === 'options') {
-                    const optionsList = document.createElement('ul');
-                    optionsList.className = 'options-list';
-
-                    step.options.forEach(opt => {
-                        const optItem = document.createElement('li');
-                        optItem.className = 'option-item';
-                        optItem.innerText = opt.text;
-                        optItem.onclick = () => navigateNext(opt.val);
-                        optionsList.appendChild(optItem);
-                    });
-
-                    screenDiv.appendChild(optionsList);
-                }
-
-                quizContainer.appendChild(screenDiv);
-            });
+    // Quiz Data
+    const questions = [
+        {
+            q: "Gender",
+            options: [
+                { text: "Male", value: 1 },
+                { text: "Female", value: 1 },
+                { text: "Something woke", value: 2 }
+            ]
+        },
+        {
+            q: "What is your Annual Income?",
+            options: [
+                { text: "Invasion of privacy much?", value: -1 },
+                { text: "More than a police officer", value: 2 },
+                { text: "$50,000", value: -2 },
+                { text: "I have a very generous aunt", value: 1 }
+            ]
+        },
+        {
+            q: "Do you already have an account with us?",
+            options: [
+                { text: "Yes", value: -1 },
+                { text: "No", value: 1 },
+                { text: "I’ve never heard of this prestigious institution before this", value: 2 },
+                { text: "No (again)", value: -2 }
+            ]
+        },
+        {
+            q: "Why do you need this credit card?",
+            options: [
+                { text: "None of your business", value: 1 },
+                { text: "My house is on the line and about to get repossessed", value: -2 },
+                { text: "To show I care about the Core Values", value: 2 },
+                { text: "To purchase whatever I want recklessly", value: -1 }
+            ]
+        },
+        {
+            q: "Your credit card declines for a pack of gum. Do you:",
+            options: [
+                { text: "Blame the machine and/or the cashier", value: -1 },
+                { text: "Casually pull out a second card", value: 2 },
+                { text: "Leave the store and never return", value: -2 },
+                { text: "Say “Oh darn it, I’ll go put it back” then proceed to get out of the line and walk towards the back, put the gum in your pocket and leave the store", value: 1 }
+            ]
+        },
+        {
+            q: "What will be the first purchase you’ll make with this new plastic?",
+            options: [
+                { text: "A gift for my wife/husband", value: -1 },
+                { text: "Food or the mortgage payment (I told you my hose is on the line)", value: -2 },
+                { text: "I will be using this card for emergencies only", value: 2 },
+                { text: "Again, none of your business, bro", value: 1 }
+            ]
+        },
+        {
+            q: "Your statement balance is $500. You pay $499. How do you feel?",
+            options: [
+                { text: "Financially responsible", value: 1 },
+                { text: "Like a genius who gained the system", value: -1 },
+                { text: "Annoyed that you couldn’t find another 99 cents under the couch", value: 2 },
+                { text: "Proud that you left $1 just to remind the bank who’s in charge", value: -2 }
+            ]
+        },
+        {
+            q: "Favorite thing about Yehuda",
+            options: [
+                { text: "His facy face", value: -1 },
+                { text: "His professionalism", value: 2 },
+                { text: "His work ethic", value: 1 },
+                { text: "Not really my cup of tea that guy…", value: -2 }
+            ]
+        },
+        {
+            q: "What is the capital of Paraguay?",
+            options: [
+                { text: "Montevideo", value: -1 },
+                { text: "Asuncion", value: 2 },
+                { text: "La Paz", value: -2 },
+                { text: "What is a Paraguay", value: 1 }
+            ]
+        },
+        {
+            q: "Samuel Daguer´s favorite brand is…",
+            options: [
+                { text: "Samuel Heath", value: -1 },
+                { text: "Rubinet", value: 2 },
+                { text: "Phylrich", value: -2 },
+                { text: "Gessi", value: 2 }
+            ]
+        },
+        {
+            q: "In Cuernavaca, license plates are formatted with 3 letters and 4 numbers (for example: AAA-####). The letters I, Q, O and X are excluded, and letters A and E can’t be used in the second position. How many license combinations are there?",
+            options: [
+                { text: "25,500,000", value: -1 },
+                { text: "A lot", value: 1 },
+                { text: "96,800,000", value: 2 },
+                { text: "At least 5", value: -2 }
+            ]
         }
+    ];
 
-        function navigateNext(scoreValue) {
-            totalScore += scoreValue;
+    // Navigation Functions
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function showNameScreen() {
+        switchScreen('name-screen');
+    }
+
+    function startQuiz() {
+        const nameInput = document.getElementById('user-name-input').value.trim();
+        if (nameInput === "") {
+            alert("Please enter your name to continue.");
+            return;
+        }
+        userName = nameInput;
+        currentQuestionIndex = 0;
+        totalScore = 0;
+        renderQuestion();
+        switchScreen('question-screen');
+    }
+
+    function renderQuestion() {
+        const qData = questions[currentQuestionIndex];
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = ''; // Clear previous
+
+        qData.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => selectOption(opt.value);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(value) {
+        totalScore += value;
+        currentQuestionIndex++;
+        
+        if (currentQuestionIndex < questions.length) {
+            renderQuestion();
+        } else {
+            startLoading();
+        }
+    }
+
+    // Loading Animation
+    function startLoading() {
+        switchScreen('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+        let width = 0;
+        
+        const interval = setInterval(() => {
+            width += 2;
+            progressBar.style.width = width + '%';
             
-            // Hide current screen
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            currentStep++;
-
-            if (currentStep < quizData.length) {
-                // Show next interactive screen
-                document.getElementById(`step-${currentStep}`).classList.add('active');
-            } else {
-                // Processing animation window trigger
-                triggerLoader();
+            if (width >= 100) {
+                clearInterval(interval);
+                setTimeout(showResult, 500);
             }
+        }, 50); // 2.5 seconds total
+    }
+
+    // Result Calculation & Display
+    function generateRandomCardNumber() {
+        let num = "";
+        for(let i=0; i<4; i++) {
+            num += Math.floor(1000 + Math.random() * 9000);
+            if(i < 3) num += " ";
+        }
+        return num;
+    }
+
+    function showResult() {
+        switchScreen('result-screen');
+        
+        const cardTitle = document.getElementById('card-title');
+        const cardContainer = document.getElementById('card-container');
+        const cardLimit = document.getElementById('card-limit');
+        
+        let cardName = "";
+        let creditLimit = "";
+        let cardClass = "";
+
+        // Determine outcome based on score
+        if (totalScore <= -17) {
+            // Worst 3 scores (-19, -18, -17)
+            cardTitle.innerText = "";
+            cardLimit.innerText = "";
+            cardContainer.innerHTML = `<div class="declined-text">DECLINED</div>`;
+            return;
+        } else if (totalScore >= -16 && totalScore <= -14) {
+            cardName = "At Least You Tried";
+            cardClass = "card-white";
+            creditLimit = "$250";
+        } else if (totalScore >= -13 && totalScore <= -8) {
+            cardName = "Better Than Nothing";
+            cardClass = "card-red-gray";
+            creditLimit = "$500";
+        } else if (totalScore >= -7 && totalScore <= -2) {
+            cardName = "Almost Positive Score";
+            cardClass = "card-purple";
+            creditLimit = "$750";
+        } else if (totalScore >= -1 && totalScore <= 4) {
+            cardName = "Positive Score";
+            cardClass = "card-light-blue";
+            creditLimit = "$1,250";
+        } else if (totalScore >= 5 && totalScore <= 10) {
+            cardName = "Golden Core Values";
+            cardClass = "card-golden";
+            creditLimit = "$5,000";
+        } else if (totalScore >= 11 && totalScore <= 16) {
+            cardName = "Brushed Platinum";
+            cardClass = "card-platinum";
+            creditLimit = "$100,000";
+        } else if (totalScore >= 17) {
+            cardName = "Ultra Mega Wow Gun Metal Black";
+            cardClass = "card-black";
+            creditLimit = "$1,000,000";
         }
 
-        function triggerLoader() {
-            const loadScreen = document.getElementById('loading-screen');
-            const progressBar = document.getElementById('progress-bar');
-            loadScreen.classList.add('active');
+        cardTitle.innerText = cardName;
+        cardLimit.innerText = "Credit Limit: " + creditLimit;
+        
+        const randomNum = generateRandomCardNumber();
+        
+        cardContainer.innerHTML = `
+            <div class="credit-card ${cardClass}">
+                <div class="card-bank">DAGUER'S BANK</div>
+                <div class="card-chip"></div>
+                <div class="card-number">${randomNum}</div>
+                <div class="card-name">${userName}</div>
+            </div>
+        `;
+    }
+</script>
 
-            let width = 0;
-            const interval = setInterval(() => {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    loadScreen.classList.remove('active');
-                    renderCreditResult();
-                } else {
-                    width += 2.5; // Controls evaluation resolution speed (approx 4 seconds)
-                    progressBar.style.width = width + '%';
-                }
-            }, 100);
-        }
-
-        // Helper random card number sequence generator starting with required code
-        function generateCardNumbers() {
-            let result = "0111 ";
-            for (let i = 0; i < 3; i++) {
-                let segment = Math.floor(1000 + Math.random() * 9000).toString();
-                result += segment + (i < 2 ? " " : "");
-            }
-            return result;
-        }
-
-        function renderCreditResult() {
-            const resultScreen = document.getElementById('result-screen');
-            const target = document.getElementById('result-payload');
-            resultScreen.classList.add('active');
-
-            let cardName = "";
-            let cardClass = "";
-            let creditLimit = "";
-            let isDeclined = false;
-
-            // Strict Metric Logic Engine Tier Mapping
-            if (totalScore >= -19 && totalScore <= -17) {
-                isDeclined = true;
-            } else if (totalScore >= -16 && totalScore <= -14) {
-                cardName = "At Least Is Something Card";
-                cardClass = "card-plain-white";
-                creditLimit = "$500";
-            } else if (totalScore >= -13 && totalScore <= -8) {
-                cardName = "Participation Blue Card";
-                cardClass = "card-turquoise-white";
-                creditLimit = "$1,000";
-            } else if (totalScore >= -7 && totalScore <= -2) {
-                cardName = "Secure Start Card";
-                cardClass = "card-yellow-green";
-                creditLimit = "$1,750";
-            } else if (totalScore >= -1 && totalScore <= 4) {
-                cardName = "Foundation One Card";
-                cardClass = "card-red-yellow";
-                creditLimit = "$2,000";
-            } else if (totalScore >= 5 && totalScore <= 10) {
-                cardName = "StepUp Card";
-                cardClass = "card-purple";
-                creditLimit = "$55,000";
-            } else if (totalScore >= 11 && totalScore <= 16) {
-                cardName = "Gold Reserve Card";
-                cardClass = "card-gold";
-                creditLimit = "$100,000";
-            } else if (totalScore >= 17 && totalScore <= 19) {
-                cardName = "Brushed Platinum Card";
-                cardClass = "card-platinum-brushed";
-                creditLimit = "$1,000,000";
-            } else if (totalScore >= 20 && totalScore <= 22) {
-                cardName = "Platinum Black Gun Metal Ultra Mega Wow Card";
-                cardClass = "card-black-gunmetal";
-                creditLimit = "$2,000,000";
-            }
-
-            if (isDeclined) {
-                target.innerHTML = `
-                    <div class="card-title-top">APPLICATION STATUS</div>
-                    <div class="credit-card card-declined">
-                        DECLINED
-                    </div>
-                    <div class="credit-limit-display">Risk metrics outside parameters for matching account models.</div>
-                `;
-            } else {
-                target.innerHTML = `
-                    <div class="card-title-top">${cardName}</div>
-                    <div class="credit-card ${cardClass}">
-                        <div class="card-bank-name">DAGUER'S BANK</div>
-                        <div class="emv-chip"></div>
-                        <div class="card-number">${generateCardNumbers()}</div>
-                        <div class="card-holder">${applicantName}</div>
-                    </div>
-                    <div class="credit-limit-display">Available Credit Limit: <span>${creditLimit}</span></div>
-                `;
-            }
-        }
-
-        // Initialize App on load
-        window.onload = buildQuiz;
-    </script>
 </body>
 </html>
